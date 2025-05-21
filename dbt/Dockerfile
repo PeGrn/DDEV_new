@@ -1,5 +1,3 @@
-# Modifier le Dockerfile
-docker exec -it airflow-webserver cat > ./dbt/Dockerfile << 'EOL'
 FROM python:3.9-slim
 
 WORKDIR /usr/app/dbt
@@ -8,19 +6,8 @@ WORKDIR /usr/app/dbt
 RUN pip install --upgrade pip && \
     pip install dbt-postgres==1.3.0 pytz
 
-# Copy dbt profile
-COPY profiles.yml /root/.dbt/profiles.yml
+# Set dbt profiles directory
+ENV DBT_PROFILES_DIR="/usr/app/dbt"
 
-# Copy dbt project files
-COPY . .
-
-# Set entry point
-ENTRYPOINT ["dbt"]
-CMD ["run"]
-EOL
-
-# Reconstruire l'image dbt
-docker-compose build dbt
-
-# Redémarrer le conteneur dbt
-docker-compose up -d dbt
+# Keep container running
+CMD ["tail", "-f", "/dev/null"]

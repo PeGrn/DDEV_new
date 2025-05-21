@@ -48,7 +48,7 @@ def load_taxi_data(spark, year):
     taxi_df = spark.read.parquet(f"s3a://nyc-taxi-data/yellow_taxi/yellow_tripdata_{year}-*.parquet")
     return taxi_df
 
-def transform_taxi_data(df):
+def transform_taxi_data(spark, df):
     """
     Transform Yellow Taxi data.
     Extract:
@@ -161,7 +161,7 @@ def main():
         
         # Transform data
         logger.info("Transforming taxi data")
-        transformed_df = transform_taxi_data(taxi_df)
+        transformed_df = transform_taxi_data(spark, taxi_df)  # Ajout du paramètre spark
         
         # Prepare fact table
         logger.info("Preparing fact_taxi_trips table")
@@ -179,5 +179,6 @@ def main():
         spark.stop()
 
 if __name__ == "__main__":
-    spark = create_spark_session()
+    # Supprimer cette ligne qui crée un second objet spark sans référence
+    # spark = create_spark_session()
     main()
